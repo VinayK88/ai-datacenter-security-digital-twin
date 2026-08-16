@@ -20,6 +20,14 @@
       "chokepoint_score": 1.0
     },
     {
+      "asset_id": "gpu-node-01-01",
+      "kind": "gpu_node",
+      "degree": 9,
+      "criticality": 0.9,
+      "articulation_point": true,
+      "chokepoint_score": 0.967
+    },
+    {
       "asset_id": "gpu-node-01-02",
       "kind": "gpu_node",
       "degree": 9,
@@ -28,30 +36,34 @@
       "chokepoint_score": 0.967
     },
     {
-      "asset_id": "spine-sw-01",
-      "kind": "network_switch",
-      "degree": 4,
+      "asset_id": "gpu-node-01-03",
+      "kind": "gpu_node",
+      "degree": 9,
       "criticality": 0.9,
       "articulation_point": true,
-      "chokepoint_score": 0.7337
-    },
-    {
-      "asset_id": "identity-01",
-      "kind": "identity_service",
-      "degree": 3,
-      "criticality": 1.0,
-      "articulation_point": true,
-      "chokepoint_score": 0.72
+      "chokepoint_score": 0.967
     }
   ],
+  "chokepoint_ties": {
+    "score": 0.967,
+    "assets": [
+      "gpu-node-01-01",
+      "gpu-node-01-02",
+      "gpu-node-01-03",
+      "gpu-node-02-01",
+      "gpu-node-02-02",
+      "gpu-node-02-03"
+    ],
+    "note": "All six GPU nodes are tied; ordering among tied nodes follows deterministic asset insertion order."
+  },
   "bmc_control_what_if": {
     "scenario": "bmc_compromise",
     "start_asset": "bmc-01-02",
     "max_hops": 3,
-    "raw_blast_score": 0.4695,
+    "raw_blast_score": 0.2475,
     "combined_control_reduction": 0.8248,
-    "residual_blast_score": 0.0823,
-    "resilience_score": 0.9177,
+    "residual_blast_score": 0.0434,
+    "resilience_score": 0.9566,
     "note": "control effectiveness values are illustrative assumptions, not empirical probabilities"
   }
 }
