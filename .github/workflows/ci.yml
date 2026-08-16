@@ -1,0 +1,30 @@
+name: AI Data Center Digital Twin CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Run digital twin demo
+        run: python -m digital_twin.demo
+
+      - name: Compile application modules
+        run: python -m py_compile digital_twin/*.py dashboard/app.py api/app.py
