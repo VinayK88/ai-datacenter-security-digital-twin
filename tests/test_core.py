@@ -23,16 +23,28 @@ class DigitalTwinTests(unittest.TestCase):
             for step in get_scenario(name):
                 self.assertIn(step.asset_id, self.twin.assets)
 
+    def test_attack_graph_is_directional(self):
+        self.assertIn("gpu-node-01-02", self.twin.attack_neighbors("bmc-01-02"))
+        self.assertNotIn("bmc-01-02", self.twin.attack_neighbors("gpu-node-01-02"))
+        self.assertIn("k8s-control-01", self.twin.attack_neighbors("identity-01"))
+        self.assertNotIn("identity-01", self.twin.attack_neighbors("k8s-control-01"))
+
     def test_bmc_blast_radius_is_bounded_and_reproducible(self):
         blast = simulate_compromise(self.twin, "bmc-01-02", max_hops=3)
-        self.assertEqual(blast.reachable_assets, 20)
-        self.assertEqual(blast.gpu_nodes, 6)
+        self.assertEqual(blast.reachable_assets, 9)
+        self.assertEqual(blast.critical_assets, 4)
+        self.assertEqual(blast.gpu_nodes, 1)
         self.assertEqual(blast.gpus, 4)
-        self.assertAlmostEqual(blast.blast_score, 0.4695, places=4)
+        self.assertEqual(blast.workloads, 1)
+        self.assertAlmostEqual(blast.blast_score, 0.2475, places=4)
 
     def test_control_plane_has_larger_blast_radius(self):
         bmc = simulate_compromise(self.twin, "bmc-01-02", max_hops=3)
         control = simulate_compromise(self.twin, "k8s-control-01", max_hops=3)
+        self.assertEqual(control.reachable_assets, 40)
+        self.assertEqual(control.gpus, 24)
+        self.assertEqual(control.models, 1)
+        self.assertAlmostEqual(control.blast_score, 0.6331, places=4)
         self.assertGreater(control.reachable_assets, bmc.reachable_assets)
         self.assertGreater(control.blast_score, bmc.blast_score)
 
