@@ -2,13 +2,13 @@
 
 # 🧠🛡️ AI Data Center Security Digital Twin
 
-### Counterfactual cyber-risk, resilience, and blast-radius simulation for GPU clusters and AI infrastructure
+### Counterfactual cyber-risk, resilience, and directed blast-radius simulation for GPU clusters and AI infrastructure
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![CI](https://github.com/VinayK88/ai-datacenter-security-digital-twin/actions/workflows/ci.yml/badge.svg)](https://github.com/VinayK88/ai-datacenter-security-digital-twin/actions/workflows/ci.yml)
 [![FastAPI](https://img.shields.io/badge/FastAPI-simulation%20API-009688?logo=fastapi)](api/app.py)
 [![Streamlit](https://img.shields.io/badge/Streamlit-security%20workbench-FF4B4B?logo=streamlit&logoColor=white)](dashboard/app.py)
-[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)](Dockerfile)
+[![Docker](https://img.shields.io/badge/Docker-CI%20build%20verified-2496ED?logo=docker&logoColor=white)](Dockerfile)
 [![Scope](https://img.shields.io/badge/Data-synthetic%20only-7B61FF)](#safety-and-scope)
 
 **Model → observe → attack-simulate → correlate → trace → rank → blast-test → harden → compare residual risk**
@@ -19,13 +19,13 @@
 
 An AI data center is a tightly coupled cyber-physical system. A single trust relationship can connect a **BMC, PDU, GPU host, Kubernetes control plane, privileged workload, identity service, object store, model registry, and high-value model artifact**.
 
-This repository builds a synthetic security digital twin of that environment and asks four questions that are difficult to answer from isolated alert streams:
+This repository builds a synthetic security digital twin and asks four questions that isolated alert streams do not answer well:
 
 > **What is happening?** — correlate security + infrastructure telemetry.
 >
-> **What can an attacker reach?** — reconstruct paths through the live trust graph.
+> **What can an attacker plausibly reach?** — traverse directional trust and compromise paths.
 >
-> **What matters systemically?** — identify blast radius and trust chokepoints.
+> **What matters systemically?** — identify blast radius and structural trust chokepoints.
 >
 > **Which controls change the outcome?** — compare raw vs. residual risk under explicit defensive assumptions.
 
@@ -37,7 +37,7 @@ The core simulator is intentionally dependency-light. Graph traversal, telemetry
   <img src="assets/dashboard-overview.svg" alt="AI Data Center Security Digital Twin dashboard" width="100%" />
 </p>
 
-The Streamlit security workbench now exposes **seven operational views**: Digital Twin, Attack Path, Risk & Telemetry, Blast Radius, Trust Chokepoints, Control What-if, and Counterfactual Actions.
+The Streamlit workbench exposes **seven operational views**: Digital Twin, Attack Path, Risk & Telemetry, Blast Radius, Trust Chokepoints, Control What-if, and Counterfactual Actions.
 
 ## The digital twin in one picture
 
@@ -45,40 +45,71 @@ The Streamlit security workbench now exposes **seven operational views**: Digita
   <img src="assets/twin-layers.svg" alt="AI data center security digital twin system layers" width="100%" />
 </p>
 
-The project deliberately spans three layers rather than treating AI security as only a Kubernetes or model-security problem:
-
 | Layer | Examples |
 | --- | --- |
 | Physical / management | rack, PDU, BMC, GPU node, GPU, ToR / spine fabric |
 | Platform / identity | Kubernetes control plane, workload, admin identity, object storage |
 | AI / security | model registry, model artifact, attack paths, blast radius, resilience |
 
+## Two graphs, two different questions
+
+A key design decision is to avoid treating every infrastructure relationship as reversible.
+
+```mermaid
+flowchart LR
+    TWIN["Digital Twin"] --> STRUCT["Structural graph\nundirected"]
+    TWIN --> ATTACK["Attack graph\ndirected"]
+
+    STRUCT --> CHOKE["Articulation points\ntrust chokepoints"]
+    STRUCT --> DEGREE["Connectivity / dependency posture"]
+
+    ATTACK --> PATH["Plausible compromise paths"]
+    ATTACK --> BLAST["Directed blast radius"]
+    BLAST --> CTRL["Control what-if"]
+    CTRL --> RESIDUAL["Residual systemic risk"]
+```
+
+The **structural graph** represents dependency/adjacency and is deliberately undirected for architectural posture analysis. The **attack graph** separately encodes directional compromise possibilities such as:
+
+```text
+BMC → GPU node
+Identity service → Kubernetes control plane
+Kubernetes control plane → GPU nodes
+GPU node → workload / local GPUs
+Workload → model registry / object storage
+Model registry → model artifact
+PDU → GPU node
+```
+
+This prevents a compromised GPU node from automatically inheriting reverse administrative access to its BMC, identity service, or control plane merely because those systems are structurally connected.
+
 ## 60-second architecture
 
 ```mermaid
 flowchart LR
-    T["Synthetic AI Data Center Twin"] --> PHY["Rack · PDU · BMC · GPU node · GPU"]
-    T --> LOG["Kubernetes · Workload · Identity · Storage"]
-    T --> AI["Model Registry · Foundation Model"]
+    PHY["Rack · PDU · BMC · GPU node · GPU"] --> TWIN["Synthetic AI Data Center Twin"]
+    PLATFORM["Kubernetes · Workload · Identity · Storage"] --> TWIN
+    AI["Model Registry · Foundation Model"] --> TWIN
 
-    PHY & LOG & AI --> TEL["Security + Infrastructure Telemetry"]
+    TWIN --> STRUCT["Structural Topology"]
+    TWIN --> ATTACK["Directed Attack Graph"]
+    TWIN --> TEL["Security + Infrastructure Telemetry"]
+
     SCN["Attack Scenario"] --> TEL
-    SCN --> PATH["Attack Path"]
-
+    SCN --> PATH["Scenario Evidence"]
     TEL --> ANOM["Anomaly Scoring"]
-    T --> GRAPH["Topology / Trust Graph"]
-    PATH --> RISK["Explainable Asset Risk"]
+
+    STRUCT --> CHOKE["Trust Chokepoints"]
+    STRUCT --> RISK["Explainable Asset Risk"]
     ANOM --> RISK
-    GRAPH --> RISK
+    PATH --> RISK
 
-    GRAPH --> CHOKE["Trust Chokepoints"]
-    GRAPH --> CF["Counterfactual Compromise"]
-    CF --> BLAST["Blast Radius"]
+    ATTACK --> CF["Counterfactual Compromise"]
+    CF --> BLAST["Directed Blast Radius"]
     BLAST --> CTRL["Control What-if"]
-    CTRL --> RESIDUAL["Residual Systemic Risk"]
+    CTRL --> RESIDUAL["Residual Risk"]
 
-    RISK & CHOKE & BLAST & RESIDUAL --> UI["Security Workbench"]
-    BLAST --> RESP["Read-only Response Recommendations"]
+    RISK & CHOKE & BLAST & RESIDUAL --> UI["Security Workbench / API"]
 ```
 
 ## Default synthetic environment
@@ -94,15 +125,13 @@ The deterministic twin contains **57 synthetic assets**:
 | Identity | identity service, privileged admin, ML engineer |
 | AI / data | object storage, model registry, `foundation-model-v3` |
 
-A GPU node is not modeled as an isolated server. It is connected to its BMC, rack network, PDU, Kubernetes control plane, local GPUs, workload, model paths, and object storage.
-
 ```mermaid
 graph LR
     BMC["BMC"] --- NODE["GPU Node"]
-    TOR["Top-of-Rack Switch"] --- NODE
+    TOR["Top-of-Rack"] --- NODE
     PDU["PDU"] --- NODE
-    K8S["Kubernetes Control Plane"] --- NODE
-    NODE --- GPU1["GPU ×4"]
+    K8S["K8s Control Plane"] --- NODE
+    NODE --- GPU["GPU ×4"]
     NODE --- POD["Training Workload"]
     POD --- STORE["Object Storage"]
     POD --- REG["Model Registry"]
@@ -129,21 +158,19 @@ Network        east-west / egress volume
 Model layer    model-registry artifact reads
 ```
 
-The important design idea is **contextual correlation**. A high GPU-utilization event alone may be normal. The same signal following a privileged pod creation, a BMC pivot, and unusual egress may be evidence in a multi-stage path.
+A high GPU-utilization event alone may be normal. The same signal following a privileged workload creation, management-plane anomaly, and unusual egress is more meaningful when evaluated against topology and scenario evidence.
 
-## Simulated threat scenarios
-
-The twin now includes five defensive scenarios:
+## Simulated defensive scenarios
 
 | Scenario | Initial surface | Main domains crossed | Illustrative outcome |
 | --- | --- | --- | --- |
-| `bmc_compromise` | remote management plane | BMC → compute → K8s → model | privileged workload + model access |
+| `bmc_compromise` | remote management plane | BMC → compute → workload → model/data | privileged workload + model access |
 | `model_exfiltration` | stolen ML identity | IAM → registry → storage → network | bulk model artifact transfer |
 | `rogue_workload` | Kubernetes control plane | K8s → workload → host → model | unsigned privileged execution |
 | `cryptomining` | compromised workload | workload → GPU → power → network | off-schedule GPU resource hijack |
 | `power_control_abuse` | privileged operations session | IAM → PDU → GPU node → workload | cyber-physical service disruption |
 
-Scenario steps use representative ATT&CK-style technique names to communicate the defensive narrative. They are intentionally abstract and are not exploit instructions.
+Scenario steps use representative ATT&CK-style technique names to communicate defensive intent. They are abstract simulations, not exploit instructions.
 
 ## Example — BMC compromise
 
@@ -152,8 +179,7 @@ sequenceDiagram
     participant A as Attacker
     participant B as BMC
     participant N as GPU Node
-    participant K as Kubernetes
-    participant P as Training Pod
+    participant P as Training Workload
     participant M as Model Registry
     participant D as Digital Twin
 
@@ -161,51 +187,52 @@ sequenceDiagram
     B->>D: auth_failures = 18
     A->>B: Unusual remote console / power commands
     B->>D: bmc_commands = 16
-    A->>N: Pivot through management relationship
-    A->>K: Privileged workload creation
-    K->>D: pod_creations = 8
-    P->>M: Model artifact access
+    B->>N: Directed management-plane pivot
+    N->>P: Privileged workload exposure
+    P->>M: Model artifact access path
     D-->>D: correlate anomaly + path + criticality
-    D-->>D: simulate 3-hop blast radius
+    D-->>D: simulate directed 3-hop blast radius
 ```
 
-The deterministic fixture produces these top risk signals:
+The deterministic fixture preserves these top risk signals:
 
 | Asset | Risk | Why it rises |
 | --- | ---: | --- |
-| `gpu-node-01-02` | **0.9660** | max anomaly + simulated attack path + privilege + connectivity |
+| `gpu-node-01-02` | **0.9660** | max anomaly + scenario exposure + privilege + connectivity |
 | `model-registry-01` | **0.9149** | criticality + model-read anomaly + path exposure |
 | `bmc-01-02` | **0.8593** | authentication/BMC-command anomaly + privileged surface |
 
-Overall synthetic environment risk for this scenario: **0.8284**.
+Overall synthetic environment risk: **0.8284**.
 
-## Counterfactual blast-radius simulation
+## Directed counterfactual blast-radius simulation
 
-Detection is only the first question. The twin can also ask:
+The twin can ask:
 
 ```text
 WHAT IF bmc-01-02 IS COMPROMISED RIGHT NOW?
 ```
 
-and traverse the actual synthetic trust graph to estimate downstream exposure.
+and traverse only the **directed compromise graph** for the selected hop budget.
 
 <p align="center">
-  <img src="assets/blast-radius.svg" alt="BMC counterfactual blast radius" width="100%" />
+  <img src="assets/blast-radius.svg" alt="Directed BMC counterfactual blast radius" width="100%" />
 </p>
 
 ### Deterministic 3-hop comparison
 
 | Metric | BMC compromise | Kubernetes control-plane compromise |
 | --- | ---: | ---: |
-| Reachable assets | **20** | **57** |
-| Critical assets | **12** | **20** |
-| GPU nodes exposed | **6** | **6** |
+| Reachable assets | **9** | **40** |
+| Critical assets | **4** | **10** |
+| GPU nodes exposed | **1** | **6** |
 | GPUs exposed | **4** | **24** |
 | Workloads exposed | **1** | **6** |
 | Model assets exposed | **0** | **1** |
-| Blast score | **0.4695** | **0.7728** |
+| Blast score | **0.2475** | **0.6331** |
 
-This highlights a central digital-twin idea: **risk and systemic impact are different quantities**. Two assets with similar local risk can have very different consequences because of their position in the trust graph.
+The distinction is intentional: **local risk and systemic impact are different quantities**, and directionality prevents the impact model from overstating reverse access.
+
+The executable fixture is locked to [`reports/baseline-evaluation.json`](reports/baseline-evaluation.json) by automated report-consistency tests.
 
 ## Systemic trust chokepoints
 
@@ -217,7 +244,7 @@ This highlights a central digital-twin idea: **risk and systemic impact are diff
   <img src="assets/trust-chokepoints.svg" alt="AI data center systemic trust chokepoints" width="100%" />
 </p>
 
-`digital_twin/attack_surface.py` adds topology-first security analysis. It calculates graph articulation points and ranks assets using an inspectable combination of:
+`digital_twin/attack_surface.py` uses the structural graph to calculate articulation points and rank architectural trust hubs:
 
 ```text
 42% normalized graph degree
@@ -226,25 +253,17 @@ This highlights a central digital-twin idea: **risk and systemic impact are diff
  8% privileged-surface adjustment
 ```
 
-The deterministic posture report surfaces **10 articulation points**. The highest-scoring trust hubs include:
+The deterministic posture report contains **10 articulation points**. Top systemic hubs include:
 
 | Asset | Chokepoint score | Why it matters |
 | --- | ---: | --- |
 | `k8s-control-01` | **1.000** | privileged control-plane hub, high degree, articulation point |
 | `model-registry-01` | **1.000** | model/storage trust hub, high degree, articulation point |
-| GPU nodes | **0.967** | host + GPU + workload fanout, articulation points |
-| `spine-sw-01` | **0.7337** | fabric bridge between perimeter/control-plane/racks |
-| `identity-01` | **0.7200** | privileged identity bridge to control plane and admins |
+| all 6 GPU nodes | **0.967** | host + GPU + workload fanout, tied articulation points |
 
-This answers a different question from anomaly detection:
-
-> **Which assets can become architectural single points of failure or high-value pivot hubs even before they generate an alert?**
-
-The checked-in results live in [`reports/security-posture.json`](reports/security-posture.json).
+The tie is explicit in [`reports/security-posture.json`](reports/security-posture.json), avoiding arbitrary claims that one identically modeled GPU node is inherently more systemic than another.
 
 ## Defensive control what-if simulation
-
-The twin can now model **residual risk**, not just raw impact.
 
 <p align="center">
   <img src="assets/dashboard-resilience.svg" alt="Defensive control what-if dashboard" width="100%" />
@@ -254,7 +273,7 @@ The twin can now model **residual risk**, not just raw impact.
   <img src="assets/control-resilience.svg" alt="Defensive control resilience simulation" width="100%" />
 </p>
 
-For the BMC scenario, the current synthetic control catalog includes:
+For the BMC scenario, the synthetic control catalog includes:
 
 | Control | Illustrative effectiveness assumption |
 | --- | ---: |
@@ -263,22 +282,18 @@ For the BMC scenario, the current synthetic control catalog includes:
 | signed privileged-workload enforcement | 34% |
 | model-registry egress guard | 31% |
 
-Because the controls are combined as independent residual-risk reducers in this **illustrative** model, the BMC scenario changes from:
+With the directed blast-radius model:
 
 ```text
-raw blast score       0.4695
+raw blast score       0.2475
 combined reduction    82.5%
-residual blast score  0.0823
-resilience score      0.9177
+residual blast score  0.0434
+resilience score      0.9566
 ```
 
-These values are transparent simulation assumptions — **not empirical breach probabilities or measured control efficacy**. The purpose is to demonstrate how a digital twin can compare architecture choices before making disruptive changes.
-
-Other controls in the catalog cover cluster-admin access, GPU-workload egress, model-registry access, and remote PDU operations.
+These are transparent **simulation assumptions**, not empirical breach probabilities or measured control efficacy.
 
 ## Cyber-physical scenario — power control abuse
-
-The new `power_control_abuse` scenario extends the project beyond conventional cloud/security telemetry:
 
 ```mermaid
 flowchart LR
@@ -293,26 +308,16 @@ flowchart LR
     TWIN --> IMPACT["Cyber-physical impact analysis"]
 ```
 
-New synthetic metrics include:
-
-```text
-pdu_commands
-rack_power_kw
-temperature_c
-```
-
-This makes it possible to reason about an AI facility as a **cyber-physical system**, where management-plane compromise can affect compute availability and active training workloads.
+Synthetic metrics include `pdu_commands`, `rack_power_kw`, and `temperature_c`, allowing the project to reason about availability effects across management, power, compute, and workload layers.
 
 ## Explainable asset risk
-
-For each asset, the project combines five inspectable factors:
 
 ```text
 asset risk =
     34% criticality
   + 28% telemetry anomaly
-  + 12% graph connectivity
-  + 16% simulated attack-path exposure
+  + 12% structural connectivity
+  + 16% simulated scenario exposure
   + privileged / internet-facing surface adjustments
 ```
 
@@ -327,11 +332,11 @@ internet_exposed
 high_connectivity
 ```
 
-The formula is deliberately simple enough to audit. A production system could replace components with calibrated ML or seasonality-aware anomaly models while preserving the same evidence contract.
+The formula is deliberately auditable. Production implementations could replace components with calibrated ML while preserving the evidence contract.
 
 ## API input → output
 
-Run the API:
+Run:
 
 ```bash
 python -m pip install -r requirements-api.txt
@@ -356,35 +361,22 @@ uvicorn api.app:app --reload
 {
   "scenario": "bmc_compromise",
   "overall_risk": 0.8284,
-  "top_risky_assets": [
-    {
-      "asset_id": "gpu-node-01-02",
-      "risk": 0.966,
-      "reasons": [
-        "high_criticality",
-        "telemetry_anomaly",
-        "on_simulated_attack_path",
-        "privileged_surface",
-        "high_connectivity"
-      ]
-    }
-  ],
   "blast_radius": {
     "start_asset": "bmc-01-02",
     "max_hops": 3,
-    "reachable_assets": 20,
-    "critical_assets": 12,
-    "gpu_nodes": 6,
+    "reachable_assets": 9,
+    "critical_assets": 4,
+    "gpu_nodes": 1,
     "gpus": 4,
     "workloads": 1,
     "models": 0,
-    "blast_score": 0.4695
+    "blast_score": 0.2475
   },
   "resilience": {
-    "raw_blast_score": 0.4695,
+    "raw_blast_score": 0.2475,
     "control_reduction": 0.8248,
-    "residual_blast_score": 0.0823,
-    "resilience_score": 0.9177,
+    "residual_blast_score": 0.0434,
+    "resilience_score": 0.9566,
     "active_controls": [
       "bmc_network_segmentation",
       "unique_bmc_credentials",
@@ -400,9 +392,11 @@ Endpoints:
 ```text
 GET  /health
 GET  /twin
-GET  /chokepoints
+GET  /chokepoints?limit=10
 POST /simulate
 ```
+
+Invalid scenario requests return **HTTP 400**, unknown assets return **HTTP 404**, and invalid query/body bounds are handled by FastAPI validation.
 
 ## Security workbench
 
@@ -411,24 +405,32 @@ python -m pip install -r requirements-dashboard.txt
 streamlit run dashboard/app.py
 ```
 
-The dashboard now has **seven** operational views:
+Seven views:
 
 1. **Digital Twin** — inventory, zones, criticality, privilege, connectivity.
 2. **Attack Path** — ordered scenario steps and ATT&CK-style narrative.
 3. **Risk & Telemetry** — explainable asset risk and anomaly evidence.
-4. **Blast Radius** — reachable assets, critical systems, GPU/model exposure.
-5. **Trust Chokepoints** — articulation points and systemic hub ranking.
-6. **Control What-if** — raw blast, assumed control reduction, residual blast, resilience.
+4. **Blast Radius** — directed reachable assets and GPU/model exposure.
+5. **Trust Chokepoints** — structural articulation points and hub ranking.
+6. **Control What-if** — raw blast, assumed reduction, residual blast, resilience.
 7. **Counterfactual Actions** — simulated defensive recommendations only.
 
-## Quick start — core path has no third-party dependencies
+## Quick start
+
+Core simulation:
 
 ```bash
 python -m digital_twin.demo
+```
+
+Full test suite:
+
+```bash
+python -m pip install -r requirements-api.txt -r requirements-dashboard.txt
 python -m unittest discover -s tests -v
 ```
 
-Example CLI output begins with:
+Representative CLI output:
 
 ```text
 AI Data Center Security Digital Twin
@@ -436,8 +438,32 @@ assets=57
 scenario=bmc_compromise overall_risk=0.828
 
 Counterfactual: compromise bmc-01-02
-reachable=20 critical=12 gpu_nodes=6 gpus=4 blast_score=0.469
+reachable=9 critical=4 gpu_nodes=1 gpus=4 blast_score=0.247
 ```
+
+## CI verification
+
+GitHub Actions validates the project on **Python 3.11 and 3.12**. The workflow now:
+
+```text
+install API + dashboard dependencies
+        ↓
+run core + advanced + report + API tests
+        ↓
+run deterministic CLI demo
+        ↓
+compile all application modules
+        ↓
+import FastAPI / Streamlit / Pandas runtime stack
+        ↓
+launch FastAPI and probe /health
+        ↓
+launch Streamlit and probe /_stcore/health
+        ↓
+build Docker image on Python 3.12 job
+```
+
+This is deliberately stronger than syntax-only CI: it catches dependency, import, server-startup, API-contract, benchmark-drift, and container-build failures.
 
 ## Docker
 
@@ -457,19 +483,17 @@ ai-datacenter-security-digital-twin/
 ├── requirements-dashboard.txt
 │
 ├── digital_twin/
-│   ├── topology.py          # asset + trust graph
+│   ├── topology.py          # structural graph + directed attack graph
 │   ├── telemetry.py         # security / GPU / thermal / power telemetry
 │   ├── attacks.py           # defensive multi-domain scenarios
 │   ├── scoring.py           # explainable per-asset risk
-│   ├── counterfactual.py    # compromise / blast-radius simulation
+│   ├── counterfactual.py    # directed compromise / blast radius
 │   ├── attack_surface.py    # articulation points + trust chokepoints
-│   ├── resilience.py        # defensive-control what-if / residual risk
+│   ├── resilience.py        # control what-if / residual risk
 │   └── demo.py
 │
-├── api/
-│   └── app.py
-├── dashboard/
-│   └── app.py
+├── api/app.py
+├── dashboard/app.py
 ├── assets/
 │   ├── dashboard-overview.svg
 │   ├── dashboard-chokepoints.svg
@@ -484,7 +508,9 @@ ai-datacenter-security-digital-twin/
 │   └── security-posture.json
 ├── tests/
 │   ├── test_core.py
-│   └── test_advanced.py
+│   ├── test_advanced.py
+│   ├── test_api.py
+│   └── test_reports.py
 └── .github/workflows/ci.yml
 ```
 
@@ -492,14 +518,14 @@ ai-datacenter-security-digital-twin/
 
 A SIEM can show suspicious BMC authentication. A DCIM system can show rack power. GPU monitoring can show utilization and thermal behavior. Kubernetes can show workload creation. IAM can show privileged sessions. A model registry can show artifact reads.
 
-The digital-twin concept becomes valuable when those observations are evaluated **together against a living relationship model**:
+The digital twin evaluates those observations **together against a living relationship model**:
 
 ```text
 alert / infrastructure deviation
               ↓
          affected asset
               ↓
-      topology + trust graph
+   structural + directed trust context
               ↓
      plausible attack path
               ↓
@@ -507,38 +533,35 @@ alert / infrastructure deviation
               ↓
        systemic chokepoint?
               ↓
-          blast radius
+     directed blast radius
               ↓
    defensive-control what-if
               ↓
     residual risk + priority
 ```
 
-That is the architectural idea this repository demonstrates.
-
 ## Production evolution
 
 A production implementation would replace synthetic fixtures with authorized telemetry and add:
 
 - streaming topology updates from CMDB, Kubernetes, network and facility controllers;
+- typed, temporal attack edges with policy/identity context and confidence scores;
 - GPU/DCGM, BMC, IAM, eBPF, flow, storage, model-registry and facility telemetry;
-- temporal graph storage and event-time attack paths;
-- directed trust edges and privilege-aware reachability instead of purely undirected topology;
+- event-time path reconstruction and relationship expiry;
 - per-workload seasonality and calibrated anomaly models;
-- rack / power / cooling dependency modeling and redundancy analysis;
+- rack / power / cooling redundancy analysis;
 - workload identity and service-account attack relationships;
 - model provenance, signing, lineage and artifact-integrity relationships;
 - control-policy simulation before containment;
-- scenario replay for architecture-change testing;
 - human approval for disruptive actions;
 - telemetry quality, missingness and drift monitoring;
-- digital-twin versioning for incident reconstruction;
-- multi-site / multi-cluster blast-radius analysis;
-- graph embeddings or GNN research as a challenger to interpretable graph features;
+- digital-twin versioning and incident replay;
+- multi-site / multi-cluster reachability;
+- graph embeddings or GNN challengers to interpretable graph features;
 - resilience SLOs such as maximum critical assets reachable from any single management-plane compromise.
 
 ## Safety and scope
 
-Everything in this repository is **synthetic and defensive**. It does not connect to production BMCs, Kubernetes clusters, GPUs, credentials, model registries, customer data, power systems, or physical infrastructure. Attack scenarios are abstract simulations used to test detection, graph reasoning, systemic-risk analysis, and defensive architecture choices. Response recommendations are read-only and are never executed automatically.
+Everything in this repository is **synthetic and defensive**. It does not connect to production BMCs, Kubernetes clusters, GPUs, credentials, model registries, customer data, power systems, or physical infrastructure. Attack scenarios are abstract simulations used to test detection, graph reasoning, systemic-risk analysis, and defensive architecture choices. Response recommendations are read-only and never execute containment automatically.
 
 The checked-in metrics validate deterministic code paths; they are **not claims about production detection effectiveness, exploitability, control efficacy, or real-world breach probability**.
