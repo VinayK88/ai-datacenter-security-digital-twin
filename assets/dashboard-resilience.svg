@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="820" viewBox="0 0 1500 820">
+  <rect width="1500" height="820" fill="#f8fafc"/>
+  <rect x="0" y="0" width="250" height="820" fill="#111827"/>
+  <text x="28" y="55" fill="#f8fafc" font-family="Arial" font-size="23" font-weight="700">AI DC Twin</text>
+  <text x="28" y="93" fill="#94a3b8" font-family="Arial" font-size="14">Attack scenario</text>
+  <rect x="24" y="108" width="200" height="42" rx="8" fill="#1f2937"/><text x="40" y="135" fill="#e5e7eb" font-family="Arial" font-size="14">bmc_compromise ▾</text>
+  <text x="28" y="190" fill="#94a3b8" font-family="Arial" font-size="14">Counterfactual asset</text>
+  <rect x="24" y="205" width="200" height="42" rx="8" fill="#1f2937"/><text x="40" y="232" fill="#e5e7eb" font-family="Arial" font-size="14">bmc-01-02 ▾</text>
+
+  <text x="285" y="55" fill="#0f172a" font-family="Arial" font-size="30" font-weight="700">Control What-if</text>
+  <text x="285" y="88" fill="#64748b" font-family="Arial" font-size="16">Compare raw systemic impact with residual risk under explicit defensive assumptions</text>
+
+  <g font-family="Arial">
+    <rect x="285" y="125" width="245" height="95" rx="14" fill="#fff" stroke="#e2e8f0"/><text x="310" y="155" fill="#64748b" font-size="14">RAW BLAST</text><text x="310" y="197" fill="#dc2626" font-size="31" font-weight="700">0.4695</text>
+    <rect x="555" y="125" width="245" height="95" rx="14" fill="#fff" stroke="#e2e8f0"/><text x="580" y="155" fill="#64748b" font-size="14">CONTROL REDUCTION</text><text x="580" y="197" fill="#2563eb" font-size="31" font-weight="700">82.5%</text>
+    <rect x="825" y="125" width="245" height="95" rx="14" fill="#fff" stroke="#e2e8f0"/><text x="850" y="155" fill="#64748b" font-size="14">RESIDUAL BLAST</text><text x="850" y="197" fill="#16a34a" font-size="31" font-weight="700">0.0823</text>
+    <rect x="1095" y="125" width="245" height="95" rx="14" fill="#fff" stroke="#e2e8f0"/><text x="1120" y="155" fill="#64748b" font-size="14">RESILIENCE</text><text x="1120" y="197" fill="#16a34a" font-size="31" font-weight="700">0.9177</text>
+  </g>
+
+  <rect x="285" y="260" width="690" height="455" rx="18" fill="#fff" stroke="#e2e8f0"/>
+  <text x="315" y="302" fill="#0f172a" font-family="Arial" font-size="22" font-weight="700">Active defensive controls</text>
+  <g font-family="Arial">
+    <rect x="315" y="340" width="620" height="66" rx="12" fill="#ecfdf5"/><text x="340" y="369" fill="#065f46" font-size="18" font-weight="700">✓ BMC management-plane segmentation</text><text x="340" y="392" fill="#047857" font-size="14">Assumed effectiveness: 48%</text>
+    <rect x="315" y="425" width="620" height="66" rx="12" fill="#ecfdf5"/><text x="340" y="454" fill="#065f46" font-size="18" font-weight="700">✓ Unique protected BMC credentials</text><text x="340" y="477" fill="#047857" font-size="14">Assumed effectiveness: 26%</text>
+    <rect x="315" y="510" width="620" height="66" rx="12" fill="#ecfdf5"/><text x="340" y="539" fill="#065f46" font-size="18" font-weight="700">✓ Signed privileged workloads</text><text x="340" y="562" fill="#047857" font-size="14">Assumed effectiveness: 34%</text>
+    <rect x="315" y="595" width="620" height="66" rx="12" fill="#ecfdf5"/><text x="340" y="624" fill="#065f46" font-size="18" font-weight="700">✓ Model-registry egress guard</text><text x="340" y="647" fill="#047857" font-size="14">Assumed effectiveness: 31%</text>
+  </g>
+
+  <rect x="1010" y="260" width="330" height="455" rx="18" fill="#fff" stroke="#e2e8f0"/>
+  <text x="1040" y="302" fill="#0f172a" font-family="Arial" font-size="22" font-weight="700">Before vs. after</text>
+  <text x="1040" y="355" fill="#64748b" font-family="Arial" font-size="15">Raw systemic risk</text>
+  <rect x="1040" y="375" width="250" height="32" rx="16" fill="#fee2e2"/><rect x="1040" y="375" width="235" height="32" rx="16" fill="#ef4444"/>
+  <text x="1040" y="460" fill="#64748b" font-family="Arial" font-size="15">Residual systemic risk</text>
+  <rect x="1040" y="480" width="250" height="32" rx="16" fill="#dcfce7"/><rect x="1040" y="480" width="41" height="32" rx="16" fill="#22c55e"/>
+  <text x="1040" y="565" fill="#64748b" font-family="Arial" font-size="15">Decision use</text>
+  <text x="1040" y="598" fill="#0f172a" font-family="Arial" font-size="17" font-weight="700">Test architecture changes</text>
+  <text x="1040" y="625" fill="#0f172a" font-family="Arial" font-size="17" font-weight="700">before disruptive rollout</text>
+  <rect x="1040" y="662" width="260" height="32" rx="8" fill="#fff7ed"/><text x="1055" y="683" fill="#9a3412" font-family="Arial" font-size="13">Synthetic assumptions — not probabilities</text>
+</svg>
