@@ -37,6 +37,12 @@ SCENARIOS: dict[str, list[AttackStep]] = {
         AttackStep(2, "gpu-node-01-03", "consume GPU capacity", "Resource Hijacking", "impact"),
         AttackStep(3, "tor-01", "connect to external pool", "Application Layer Protocol", "command and control"),
     ],
+    "power_control_abuse": [
+        AttackStep(1, "ops-admin", "reuse privileged operations session", "Valid Accounts", "initial access"),
+        AttackStep(2, "pdu-02", "issue unusual remote power-control commands", "Remote Services", "impact preparation"),
+        AttackStep(3, "gpu-node-02-02", "force repeated power-cycle condition", "Service Stop / Inhibit System Recovery", "impact"),
+        AttackStep(4, "training-pod-02-02", "interrupt active training workload", "Endpoint Denial of Service", "impact"),
+    ],
 }
 
 
