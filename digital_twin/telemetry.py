@@ -23,6 +23,8 @@ BASELINES: dict[str, tuple[float, float]] = {
     "pod_creations": (0.8, 0.9),
     "model_reads": (2.0, 1.5),
     "temperature_c": (63.0, 6.0),
+    "pdu_commands": (0.5, 0.7),
+    "rack_power_kw": (34.0, 5.0),
 }
 
 
@@ -42,6 +44,13 @@ def generate_normal_telemetry(seed: int = 11, minutes: int = 60) -> list[Telemet
         if minute % 8 == 0:
             value = max(0.0, rng.gauss(*BASELINES["model_reads"]))
             events.append(TelemetryEvent(minute, "model-registry-01", "model_reads", round(value, 2), "model"))
+        if minute % 10 == 0:
+            for rack in (1, 2):
+                pdu_id = f"pdu-{rack:02d}"
+                command_value = max(0.0, rng.gauss(*BASELINES["pdu_commands"]))
+                power_value = max(0.0, rng.gauss(*BASELINES["rack_power_kw"]))
+                events.append(TelemetryEvent(minute, pdu_id, "pdu_commands", round(command_value, 2), "power"))
+                events.append(TelemetryEvent(minute, pdu_id, "rack_power_kw", round(power_value, 2), "power"))
     return events
 
 
@@ -70,6 +79,13 @@ def inject_attack_telemetry(events: list[TelemetryEvent], scenario: str) -> list
             TelemetryEvent(31, "gpu-node-01-03", "gpu_utilization", 100.0, "infrastructure", "persistent off-schedule GPU use"),
             TelemetryEvent(31, "gpu-node-01-03", "gpu_power_watts", 735.0, "infrastructure", "power draw above training baseline"),
             TelemetryEvent(44, "gpu-node-01-03", "egress_mbps", 120.0, "network", "mining-pool-like egress pattern"),
+        ]
+    elif scenario == "power_control_abuse":
+        injected += [
+            TelemetryEvent(27, "ops-admin", "auth_failures", 11.0, "identity", "unusual privileged operations session activity"),
+            TelemetryEvent(31, "pdu-02", "pdu_commands", 12.0, "power", "burst of remote PDU control operations"),
+            TelemetryEvent(32, "pdu-02", "rack_power_kw", 8.0, "power", "sudden rack-level power drop"),
+            TelemetryEvent(35, "gpu-node-02-02", "temperature_c", 84.0, "infrastructure", "thermal instability after repeated power cycling"),
         ]
     else:
         raise ValueError(f"Unknown scenario: {scenario}")
