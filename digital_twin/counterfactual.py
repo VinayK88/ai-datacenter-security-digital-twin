@@ -1,4 +1,4 @@
-"""Counterfactual compromise and blast-radius simulation."""
+"""Counterfactual compromise and directed blast-radius simulation."""
 
 from dataclasses import dataclass
 
@@ -24,7 +24,9 @@ def simulate_compromise(twin: DigitalTwin, start_asset: str, max_hops: int = 3) 
     if start_asset not in twin.assets:
         raise KeyError(f"Unknown asset: {start_asset}")
 
-    distances = twin.reachable(start_asset, max_hops=max_hops)
+    # Blast radius follows directed compromise/trust relationships rather than
+    # assuming that every physical/dependency connection is reversible.
+    distances = twin.attack_reachable(start_asset, max_hops=max_hops)
     impacted = sorted(distances)
     assets = [twin.assets[asset_id] for asset_id in impacted]
     critical = sum(asset.criticality >= 0.9 for asset in assets)
@@ -57,6 +59,11 @@ def simulate_compromise(twin: DigitalTwin, start_asset: str, max_hops: int = 3) 
             "revoke active privileged sessions and rotate service credentials",
             "apply emergency least-privilege policy to cluster administration",
             "review recent token issuance and workload creation events",
+        ]
+    if start.kind == "power_controller":
+        recommendations += [
+            "disable nonessential remote PDU control paths pending review",
+            "validate power-controller audit logs and administrator sessions",
         ]
     if gpu_nodes or gpus:
         recommendations.append("cordon affected GPU nodes and preserve runtime evidence")
