@@ -3,14 +3,16 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
+from digital_twin.attack_surface import trust_chokepoints
 from digital_twin.attacks import scenario_names
 from digital_twin.counterfactual import simulate_compromise
+from digital_twin.resilience import evaluate_resilience
 from digital_twin.scoring import overall_risk, score_assets
 from digital_twin.telemetry import generate_normal_telemetry, inject_attack_telemetry, top_anomalies
 from digital_twin.topology import build_default_twin
 
 
-app = FastAPI(title="AI Data Center Security Digital Twin", version="0.1.0")
+app = FastAPI(title="AI Data Center Security Digital Twin", version="0.2.0")
 
 
 class SimulationRequest(BaseModel):
@@ -34,6 +36,26 @@ def twin_summary() -> dict[str, object]:
     }
 
 
+@app.get("/chokepoints")
+def chokepoints(limit: int = 10) -> dict[str, object]:
+    twin = build_default_twin()
+    rows = trust_chokepoints(twin, limit=max(1, min(limit, 30)))
+    return {
+        "count": len(rows),
+        "chokepoints": [
+            {
+                "asset_id": row.asset_id,
+                "kind": row.kind,
+                "degree": row.degree,
+                "criticality": row.criticality,
+                "articulation_point": row.articulation_point,
+                "chokepoint_score": row.chokepoint_score,
+            }
+            for row in rows
+        ],
+    }
+
+
 @app.post("/simulate")
 def simulate(request: SimulationRequest) -> dict[str, object]:
     if request.scenario not in scenario_names():
@@ -46,6 +68,7 @@ def simulate(request: SimulationRequest) -> dict[str, object]:
     events = inject_attack_telemetry(generate_normal_telemetry(), request.scenario)
     risks = score_assets(twin, events, request.scenario)
     blast = simulate_compromise(twin, request.start_asset, request.max_hops)
+    resilience = evaluate_resilience(twin, request.scenario, request.start_asset, request.max_hops)
     anomalies = top_anomalies(events, limit=5)
 
     return {
@@ -66,6 +89,13 @@ def simulate(request: SimulationRequest) -> dict[str, object]:
             "models": blast.models,
             "blast_score": blast.blast_score,
             "recommendations": list(blast.recommendations),
+        },
+        "resilience": {
+            "raw_blast_score": resilience.raw_blast_score,
+            "control_reduction": resilience.control_reduction,
+            "residual_blast_score": resilience.residual_blast_score,
+            "resilience_score": resilience.resilience_score,
+            "active_controls": list(resilience.active_controls),
         },
         "top_anomalies": [
             {
