@@ -1,0 +1,57 @@
+{
+  "scope": "synthetic deterministic digital twin",
+  "asset_count": 57,
+  "articulation_point_count": 10,
+  "top_trust_chokepoints": [
+    {
+      "asset_id": "k8s-control-01",
+      "kind": "control_plane",
+      "degree": 9,
+      "criticality": 1.0,
+      "articulation_point": true,
+      "chokepoint_score": 1.0
+    },
+    {
+      "asset_id": "model-registry-01",
+      "kind": "model_registry",
+      "degree": 9,
+      "criticality": 1.0,
+      "articulation_point": true,
+      "chokepoint_score": 1.0
+    },
+    {
+      "asset_id": "gpu-node-01-02",
+      "kind": "gpu_node",
+      "degree": 9,
+      "criticality": 0.9,
+      "articulation_point": true,
+      "chokepoint_score": 0.967
+    },
+    {
+      "asset_id": "spine-sw-01",
+      "kind": "network_switch",
+      "degree": 4,
+      "criticality": 0.9,
+      "articulation_point": true,
+      "chokepoint_score": 0.7337
+    },
+    {
+      "asset_id": "identity-01",
+      "kind": "identity_service",
+      "degree": 3,
+      "criticality": 1.0,
+      "articulation_point": true,
+      "chokepoint_score": 0.72
+    }
+  ],
+  "bmc_control_what_if": {
+    "scenario": "bmc_compromise",
+    "start_asset": "bmc-01-02",
+    "max_hops": 3,
+    "raw_blast_score": 0.4695,
+    "combined_control_reduction": 0.8248,
+    "residual_blast_score": 0.0823,
+    "resilience_score": 0.9177,
+    "note": "control effectiveness values are illustrative assumptions, not empirical probabilities"
+  }
+}
