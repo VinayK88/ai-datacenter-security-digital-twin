@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760">
+  <rect width="1400" height="760" fill="#0b1020"/>
+  <text x="48" y="55" fill="#f8fafc" font-family="Arial" font-size="30" font-weight="700">AI Data Center Security Digital Twin</text>
+  <text x="48" y="88" fill="#94a3b8" font-family="Arial" font-size="16">GPU fabric security · attack paths · blast radius · anomaly analytics</text>
+  <g font-family="Arial">
+    <rect x="48" y="120" width="235" height="96" rx="12" fill="#111827" stroke="#334155"/><text x="70" y="150" fill="#94a3b8" font-size="14">ASSETS</text><text x="70" y="194" fill="#f8fafc" font-size="34" font-weight="700">57</text>
+    <rect x="302" y="120" width="235" height="96" rx="12" fill="#111827" stroke="#334155"/><text x="324" y="150" fill="#94a3b8" font-size="14">GPU NODES</text><text x="324" y="194" fill="#f8fafc" font-size="34" font-weight="700">6</text>
+    <rect x="556" y="120" width="235" height="96" rx="12" fill="#111827" stroke="#334155"/><text x="578" y="150" fill="#94a3b8" font-size="14">GPUS</text><text x="578" y="194" fill="#f8fafc" font-size="34" font-weight="700">24</text>
+    <rect x="810" y="120" width="235" height="96" rx="12" fill="#111827" stroke="#334155"/><text x="832" y="150" fill="#94a3b8" font-size="14">OVERALL RISK</text><text x="832" y="194" fill="#f59e0b" font-size="34" font-weight="700">0.828</text>
+    <rect x="1064" y="120" width="288" height="96" rx="12" fill="#111827" stroke="#334155"/><text x="1086" y="150" fill="#94a3b8" font-size="14">BMC BLAST SCORE</text><text x="1086" y="194" fill="#ef4444" font-size="34" font-weight="700">0.470</text>
+
+    <rect x="48" y="250" width="820" height="450" rx="12" fill="#111827" stroke="#334155"/>
+    <text x="72" y="286" fill="#f8fafc" font-size="20" font-weight="700">Highest-risk assets</text>
+    <text x="72" y="322" fill="#94a3b8" font-size="13">ASSET</text><text x="360" y="322" fill="#94a3b8" font-size="13">RISK</text><text x="485" y="322" fill="#94a3b8" font-size="13">EVIDENCE</text>
+    <line x1="72" y1="336" x2="836" y2="336" stroke="#334155"/>
+    <text x="72" y="372" fill="#e2e8f0" font-size="16">gpu-node-01-02</text><text x="360" y="372" fill="#ef4444" font-size="16" font-weight="700">0.966</text><text x="485" y="372" fill="#cbd5e1" font-size="14">anomaly · attack path · privileged</text>
+    <text x="72" y="416" fill="#e2e8f0" font-size="16">model-registry-01</text><text x="360" y="416" fill="#f97316" font-size="16" font-weight="700">0.915</text><text x="485" y="416" fill="#cbd5e1" font-size="14">model reads · criticality · attack path</text>
+    <text x="72" y="460" fill="#e2e8f0" font-size="16">bmc-01-02</text><text x="360" y="460" fill="#f97316" font-size="16" font-weight="700">0.859</text><text x="485" y="460" fill="#cbd5e1" font-size="14">auth failures · BMC commands · privileged</text>
+    <text x="72" y="504" fill="#e2e8f0" font-size="16">gpu-node-02-02</text><text x="360" y="504" fill="#f59e0b" font-size="16" font-weight="700">0.628</text><text x="485" y="504" fill="#cbd5e1" font-size="14">temperature anomaly · high connectivity</text>
+    <text x="72" y="548" fill="#e2e8f0" font-size="16">identity-01</text><text x="360" y="548" fill="#f59e0b" font-size="16" font-weight="700">0.619</text><text x="485" y="548" fill="#cbd5e1" font-size="14">auth anomaly · critical identity plane</text>
+    <rect x="72" y="585" width="750" height="88" rx="10" fill="#0f172a"/>
+    <text x="92" y="615" fill="#94a3b8" font-size="13">SIMULATED ATTACK PATH</text>
+    <text x="92" y="650" fill="#f8fafc" font-size="16">BMC → GPU node → privileged training pod → model registry</text>
+
+    <rect x="900" y="250" width="452" height="450" rx="12" fill="#111827" stroke="#334155"/>
+    <text x="924" y="286" fill="#f8fafc" font-size="20" font-weight="700">Counterfactual blast radius</text>
+    <text x="924" y="316" fill="#94a3b8" font-size="14">Compromise: bmc-01-02 · 3 hops</text>
+    <circle cx="1126" cy="430" r="90" fill="#7f1d1d" opacity="0.35" stroke="#ef4444" stroke-width="2"/>
+    <circle cx="1126" cy="430" r="55" fill="#991b1b" opacity="0.6"/>
+    <circle cx="1126" cy="430" r="18" fill="#ef4444"/>
+    <text x="1091" y="435" fill="#fff" font-size="14" font-weight="700">BMC</text>
+    <text x="936" y="572" fill="#94a3b8" font-size="14">Reachable assets</text><text x="1255" y="572" fill="#f8fafc" font-size="18" font-weight="700">20</text>
+    <text x="936" y="608" fill="#94a3b8" font-size="14">Critical assets</text><text x="1255" y="608" fill="#f8fafc" font-size="18" font-weight="700">12</text>
+    <text x="936" y="644" fill="#94a3b8" font-size="14">GPU nodes / GPUs</text><text x="1224" y="644" fill="#f8fafc" font-size="18" font-weight="700">6 / 4</text>
+  </g>
+</svg>
