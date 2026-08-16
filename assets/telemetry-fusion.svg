@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760">
+  <rect width="1400" height="760" fill="#0b1220"/>
+  <text x="60" y="70" fill="#f8fafc" font-family="Arial" font-size="34" font-weight="700">Cross-Domain Telemetry Fusion</text>
+  <text x="60" y="108" fill="#94a3b8" font-family="Arial" font-size="18">Signals that look weak in isolation become meaningful when correlated through the digital twin</text>
+
+  <g font-family="Arial" font-size="20" text-anchor="middle">
+    <rect x="70" y="175" width="230" height="88" rx="18" fill="#172554" stroke="#60a5fa"/><text x="185" y="210" fill="#bfdbfe" font-weight="700">IAM</text><text x="185" y="240" fill="#e2e8f0">auth failures · sessions</text>
+    <rect x="70" y="300" width="230" height="88" rx="18" fill="#3f1d2e" stroke="#fb7185"/><text x="185" y="335" fill="#fecdd3" font-weight="700">BMC</text><text x="185" y="365" fill="#e2e8f0">console · commands</text>
+    <rect x="70" y="425" width="230" height="88" rx="18" fill="#2e1f4f" stroke="#c084fc"/><text x="185" y="460" fill="#e9d5ff" font-weight="700">Kubernetes</text><text x="185" y="490" fill="#e2e8f0">pods · privilege</text>
+    <rect x="1100" y="175" width="230" height="88" rx="18" fill="#123524" stroke="#34d399"/><text x="1215" y="210" fill="#a7f3d0" font-weight="700">GPU / Thermal</text><text x="1215" y="240" fill="#e2e8f0">utilization · temp</text>
+    <rect x="1100" y="300" width="230" height="88" rx="18" fill="#3a2a12" stroke="#fbbf24"/><text x="1215" y="335" fill="#fde68a" font-weight="700">Power</text><text x="1215" y="365" fill="#e2e8f0">PDU · rack kW</text>
+    <rect x="1100" y="425" width="230" height="88" rx="18" fill="#12303a" stroke="#22d3ee"/><text x="1215" y="460" fill="#a5f3fc" font-weight="700">Network / Model</text><text x="1215" y="490" fill="#e2e8f0">egress · artifact reads</text>
+  </g>
+
+  <rect x="470" y="205" width="460" height="320" rx="30" fill="#111827" stroke="#94a3b8" stroke-width="2"/>
+  <text x="700" y="260" fill="#f8fafc" font-family="Arial" font-size="30" text-anchor="middle" font-weight="700">Twin Evidence Graph</text>
+  <text x="700" y="310" fill="#cbd5e1" font-family="Arial" font-size="22" text-anchor="middle">asset identity + topology + trust + time</text>
+  <rect x="540" y="350" width="320" height="54" rx="14" fill="#1e293b"/><text x="700" y="384" fill="#f8fafc" font-family="Arial" font-size="20" text-anchor="middle">Anomaly correlation</text>
+  <rect x="540" y="425" width="320" height="54" rx="14" fill="#1e293b"/><text x="700" y="459" fill="#f8fafc" font-family="Arial" font-size="20" text-anchor="middle">Attack-path reconstruction</text>
+
+  <g stroke="#64748b" stroke-width="3" fill="none" marker-end="url(#arr)">
+    <path d="M300 219 L470 290"/><path d="M300 344 L470 350"/><path d="M300 469 L470 410"/>
+    <path d="M1100 219 L930 290"/><path d="M1100 344 L930 350"/><path d="M1100 469 L930 410"/>
+  </g>
+  <defs><marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker></defs>
+
+  <rect x="300" y="610" width="800" height="72" rx="18" fill="#172033" stroke="#475569"/>
+  <text x="700" y="640" fill="#94a3b8" font-family="Arial" font-size="18" text-anchor="middle">OUTPUT</text>
+  <text x="700" y="670" fill="#f8fafc" font-family="Arial" font-size="23" text-anchor="middle" font-weight="700">Explainable risk · blast radius · chokepoints · residual risk · response priorities</text>
+</svg>
