@@ -145,6 +145,7 @@ def build_default_twin() -> DigitalTwin:
         twin.connect(rack_id, tor_id)
         twin.connect(rack_id, pdu_id)
         twin.allow_attack("spine-sw-01", tor_id)
+        twin.allow_attack("ops-admin", pdu_id)
 
         for node in range(1, 4):
             node_id = f"gpu-node-{rack:02d}-{node:02d}"
@@ -166,6 +167,9 @@ def build_default_twin() -> DigitalTwin:
             twin.allow_attack(bmc_id, node_id)
             twin.allow_attack("k8s-control-01", node_id)
             twin.allow_attack(node_id, pod_id)
+            # Workload-to-host is a separate directed path used to model explicit
+            # container/host-escape scenarios; it does not imply access to the BMC.
+            twin.allow_attack(pod_id, node_id)
             twin.allow_attack(pod_id, "object-store-01")
             twin.allow_attack(pod_id, "model-registry-01")
 
