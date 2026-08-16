@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760">
+  <rect width="1400" height="760" fill="#0b1220"/>
+  <text x="60" y="70" fill="#f8fafc" font-family="Arial" font-size="34" font-weight="700">Systemic Trust Chokepoints</text>
+  <text x="60" y="108" fill="#94a3b8" font-family="Arial" font-size="18">Which assets matter because of graph position — not just because they generate alerts?</text>
+
+  <g stroke="#475569" stroke-width="4" fill="none">
+    <path d="M700 335 L700 185"/><path d="M700 335 L430 250"/><path d="M700 335 L970 250"/>
+    <path d="M700 335 L390 475"/><path d="M700 335 L1010 475"/><path d="M700 335 L700 590"/>
+    <path d="M430 250 L240 360"/><path d="M970 250 L1160 360"/>
+    <path d="M390 475 L210 585"/><path d="M1010 475 L1190 585"/>
+  </g>
+
+  <circle cx="700" cy="335" r="110" fill="#3b1d30" stroke="#fb7185" stroke-width="4"/>
+  <text x="700" y="320" fill="#fecdd3" font-family="Arial" font-size="25" text-anchor="middle" font-weight="700">K8s Control</text>
+  <text x="700" y="353" fill="#fecdd3" font-family="Arial" font-size="25" text-anchor="middle" font-weight="700">Plane</text>
+  <text x="700" y="385" fill="#fda4af" font-family="Arial" font-size="17" text-anchor="middle">critical + privileged + hub</text>
+
+  <g font-family="Arial" text-anchor="middle">
+    <rect x="565" y="130" width="270" height="95" rx="20" fill="#12283a" stroke="#38bdf8"/><text x="700" y="170" fill="#bae6fd" font-size="22" font-weight="700">Spine Switch</text><text x="700" y="200" fill="#cbd5e1" font-size="16">fabric dependency</text>
+    <rect x="280" y="205" width="300" height="100" rx="20" fill="#173126" stroke="#34d399"/><text x="430" y="245" fill="#a7f3d0" font-size="22" font-weight="700">Model Registry</text><text x="430" y="278" fill="#cbd5e1" font-size="16">model + storage trust hub</text>
+    <rect x="820" y="205" width="300" height="100" rx="20" fill="#29204a" stroke="#a78bfa"/><text x="970" y="245" fill="#ddd6fe" font-size="22" font-weight="700">Identity Service</text><text x="970" y="278" fill="#cbd5e1" font-size="16">privileged session bridge</text>
+    <rect x="250" y="430" width="280" height="95" rx="20" fill="#172033" stroke="#64748b"/><text x="390" y="470" fill="#f8fafc" font-size="21" font-weight="700">GPU Nodes</text><text x="390" y="500" fill="#cbd5e1" font-size="16">host + GPU + workload fanout</text>
+    <rect x="870" y="430" width="280" height="95" rx="20" fill="#172033" stroke="#64748b"/><text x="1010" y="470" fill="#f8fafc" font-size="21" font-weight="700">Object Storage</text><text x="1010" y="500" fill="#cbd5e1" font-size="16">shared workload data plane</text>
+    <rect x="555" y="555" width="290" height="95" rx="20" fill="#3a2a12" stroke="#fbbf24"/><text x="700" y="595" fill="#fde68a" font-size="21" font-weight="700">PDU / BMC Plane</text><text x="700" y="625" fill="#cbd5e1" font-size="16">cyber-physical control path</text>
+  </g>
+
+  <g font-family="Arial" text-anchor="middle" fill="#94a3b8" font-size="15">
+    <text x="240" y="380">model artifact</text><text x="1160" y="380">admin identities</text>
+    <text x="210" y="605">GPUs + pods</text><text x="1190" y="605">training data</text>
+  </g>
+
+  <text x="700" y="710" fill="#f8fafc" font-family="Arial" font-size="20" text-anchor="middle" font-weight="700">Ranked from topology + criticality + privileged surface + articulation-point status</text>
+</svg>
