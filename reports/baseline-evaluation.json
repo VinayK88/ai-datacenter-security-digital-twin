@@ -1,0 +1,38 @@
+{
+  "fixture": {
+    "topology": "default",
+    "assets": 57,
+    "gpu_nodes": 6,
+    "gpus": 24,
+    "scenario": "bmc_compromise",
+    "telemetry_seed": 11
+  },
+  "risk": {
+    "overall_risk": 0.8284,
+    "highest_risk_asset": "gpu-node-01-02",
+    "highest_risk_score": 0.9660
+  },
+  "counterfactual": {
+    "start_asset": "bmc-01-02",
+    "max_hops": 3,
+    "reachable_assets": 20,
+    "critical_assets": 12,
+    "gpu_nodes": 6,
+    "gpus": 4,
+    "workloads": 1,
+    "models": 0,
+    "blast_score": 0.4695
+  },
+  "control_plane_counterfactual": {
+    "start_asset": "k8s-control-01",
+    "max_hops": 3,
+    "reachable_assets": 57,
+    "critical_assets": 20,
+    "gpu_nodes": 6,
+    "gpus": 24,
+    "workloads": 6,
+    "models": 1,
+    "blast_score": 0.7728
+  },
+  "scope": "Synthetic deterministic fixture; results validate project logic and do not estimate production security performance."
+}
