@@ -29,7 +29,9 @@ BASELINES: dict[str, tuple[float, float]] = {
 
 
 def generate_normal_telemetry(seed: int = 11, minutes: int = 60) -> list[TelemetryEvent]:
+    # Keep the original benchmark random stream stable as new telemetry domains are added.
     rng = Random(seed)
+    power_rng = Random(seed + 1000)
     events: list[TelemetryEvent] = []
     nodes = [f"gpu-node-{rack:02d}-{node:02d}" for rack in range(1, 3) for node in range(1, 4)]
     for minute in range(minutes):
@@ -47,8 +49,10 @@ def generate_normal_telemetry(seed: int = 11, minutes: int = 60) -> list[Telemet
         if minute % 10 == 0:
             for rack in (1, 2):
                 pdu_id = f"pdu-{rack:02d}"
-                command_value = max(0.0, rng.gauss(*BASELINES["pdu_commands"]))
-                power_value = max(0.0, rng.gauss(*BASELINES["rack_power_kw"]))
+                command_center, command_spread = BASELINES["pdu_commands"]
+                power_center, power_spread = BASELINES["rack_power_kw"]
+                command_value = max(0.0, power_rng.gauss(command_center, command_spread * 0.45))
+                power_value = max(0.0, power_rng.gauss(power_center, power_spread * 0.45))
                 events.append(TelemetryEvent(minute, pdu_id, "pdu_commands", round(command_value, 2), "power"))
                 events.append(TelemetryEvent(minute, pdu_id, "rack_power_kw", round(power_value, 2), "power"))
     return events
