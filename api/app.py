@@ -1,6 +1,6 @@
 """FastAPI boundary for digital-twin security simulations."""
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from digital_twin.attack_surface import trust_chokepoints
@@ -12,7 +12,7 @@ from digital_twin.telemetry import generate_normal_telemetry, inject_attack_tele
 from digital_twin.topology import build_default_twin
 
 
-app = FastAPI(title="AI Data Center Security Digital Twin", version="0.2.0")
+app = FastAPI(title="AI Data Center Security Digital Twin", version="0.3.0")
 
 
 class SimulationRequest(BaseModel):
@@ -37,9 +37,9 @@ def twin_summary() -> dict[str, object]:
 
 
 @app.get("/chokepoints")
-def chokepoints(limit: int = 10) -> dict[str, object]:
+def chokepoints(limit: int = Query(default=10, ge=1, le=30)) -> dict[str, object]:
     twin = build_default_twin()
-    rows = trust_chokepoints(twin, limit=max(1, min(limit, 30)))
+    rows = trust_chokepoints(twin, limit=limit)
     return {
         "count": len(rows),
         "chokepoints": [
@@ -58,12 +58,16 @@ def chokepoints(limit: int = 10) -> dict[str, object]:
 
 @app.post("/simulate")
 def simulate(request: SimulationRequest) -> dict[str, object]:
-    if request.scenario not in scenario_names():
-        return {"error": "unknown scenario", "available_scenarios": scenario_names()}
+    available = scenario_names()
+    if request.scenario not in available:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": "unknown scenario", "available_scenarios": available},
+        )
 
     twin = build_default_twin()
     if request.start_asset not in twin.assets:
-        return {"error": "unknown start asset"}
+        raise HTTPException(status_code=404, detail={"error": "unknown start asset"})
 
     events = inject_attack_telemetry(generate_normal_telemetry(), request.scenario)
     risks = score_assets(twin, events, request.scenario)
