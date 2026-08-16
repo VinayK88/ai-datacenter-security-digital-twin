@@ -48,6 +48,17 @@ class AdvancedTwinTests(unittest.TestCase):
         self.assertIn("pdu_commands", metrics)
         self.assertIn("pdu-02", sources)
 
+    def test_workload_can_reach_host_without_inheriting_bmc_access(self):
+        reachable = self.twin.attack_reachable("training-pod-01-03", max_hops=1)
+        self.assertIn("gpu-node-01-03", reachable)
+        self.assertNotIn("bmc-01-03", reachable)
+
+    def test_ops_admin_has_explicit_power_control_relationship(self):
+        reachable = self.twin.attack_reachable("ops-admin", max_hops=1)
+        self.assertIn("pdu-01", reachable)
+        self.assertIn("pdu-02", reachable)
+        self.assertIn("identity-01", reachable)
+
 
 if __name__ == "__main__":
     unittest.main()
