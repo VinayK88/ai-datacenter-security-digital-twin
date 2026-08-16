@@ -210,6 +210,10 @@ This highlights a central digital-twin idea: **risk and systemic impact are diff
 ## Systemic trust chokepoints
 
 <p align="center">
+  <img src="assets/dashboard-chokepoints.svg" alt="Trust chokepoints dashboard preview" width="100%" />
+</p>
+
+<p align="center">
   <img src="assets/trust-chokepoints.svg" alt="AI data center systemic trust chokepoints" width="100%" />
 </p>
 
@@ -222,15 +226,29 @@ This highlights a central digital-twin idea: **risk and systemic impact are diff
  8% privileged-surface adjustment
 ```
 
+The deterministic posture report surfaces **10 articulation points**. The highest-scoring trust hubs include:
+
+| Asset | Chokepoint score | Why it matters |
+| --- | ---: | --- |
+| `k8s-control-01` | **1.000** | privileged control-plane hub, high degree, articulation point |
+| `model-registry-01` | **1.000** | model/storage trust hub, high degree, articulation point |
+| GPU nodes | **0.967** | host + GPU + workload fanout, articulation points |
+| `spine-sw-01` | **0.7337** | fabric bridge between perimeter/control-plane/racks |
+| `identity-01` | **0.7200** | privileged identity bridge to control plane and admins |
+
 This answers a different question from anomaly detection:
 
 > **Which assets can become architectural single points of failure or high-value pivot hubs even before they generate an alert?**
 
-The analysis is useful for security architecture reviews because it can surface control-plane, identity, network, compute, and cyber-physical dependencies that deserve stronger segmentation or monitoring.
+The checked-in results live in [`reports/security-posture.json`](reports/security-posture.json).
 
 ## Defensive control what-if simulation
 
 The twin can now model **residual risk**, not just raw impact.
+
+<p align="center">
+  <img src="assets/dashboard-resilience.svg" alt="Defensive control what-if dashboard" width="100%" />
+</p>
 
 <p align="center">
   <img src="assets/control-resilience.svg" alt="Defensive control resilience simulation" width="100%" />
@@ -349,17 +367,6 @@ uvicorn api.app:app --reload
         "privileged_surface",
         "high_connectivity"
       ]
-    },
-    {
-      "asset_id": "model-registry-01",
-      "risk": 0.9149,
-      "reasons": [
-        "high_criticality",
-        "telemetry_anomaly",
-        "on_simulated_attack_path",
-        "privileged_surface",
-        "high_connectivity"
-      ]
     }
   ],
   "blast_radius": {
@@ -372,15 +379,28 @@ uvicorn api.app:app --reload
     "workloads": 1,
     "models": 0,
     "blast_score": 0.4695
+  },
+  "resilience": {
+    "raw_blast_score": 0.4695,
+    "control_reduction": 0.8248,
+    "residual_blast_score": 0.0823,
+    "resilience_score": 0.9177,
+    "active_controls": [
+      "bmc_network_segmentation",
+      "unique_bmc_credentials",
+      "signed_privileged_workloads",
+      "model_registry_egress_guard"
+    ]
   }
 }
 ```
 
-Other endpoints:
+Endpoints:
 
 ```text
-GET /health
-GET /twin
+GET  /health
+GET  /twin
+GET  /chokepoints
 POST /simulate
 ```
 
@@ -452,13 +472,16 @@ ai-datacenter-security-digital-twin/
 │   └── app.py
 ├── assets/
 │   ├── dashboard-overview.svg
+│   ├── dashboard-chokepoints.svg
+│   ├── dashboard-resilience.svg
 │   ├── blast-radius.svg
 │   ├── twin-layers.svg
 │   ├── telemetry-fusion.svg
 │   ├── trust-chokepoints.svg
 │   └── control-resilience.svg
 ├── reports/
-│   └── baseline-evaluation.json
+│   ├── baseline-evaluation.json
+│   └── security-posture.json
 ├── tests/
 │   ├── test_core.py
 │   └── test_advanced.py
