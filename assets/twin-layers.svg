@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720">
+  <rect width="1400" height="720" fill="#0b1220"/>
+  <text x="60" y="70" fill="#f8fafc" font-family="Arial, sans-serif" font-size="34" font-weight="700">AI Data Center Security Digital Twin — System Layers</text>
+  <text x="60" y="108" fill="#94a3b8" font-family="Arial, sans-serif" font-size="18">Physical infrastructure, platform trust, AI assets, telemetry and security reasoning in one graph</text>
+
+  <rect x="60" y="155" width="385" height="430" rx="24" fill="#111c31" stroke="#38bdf8" stroke-width="2"/>
+  <text x="90" y="205" fill="#7dd3fc" font-family="Arial" font-size="24" font-weight="700">PHYSICAL + MANAGEMENT</text>
+  <g fill="#e2e8f0" font-family="Arial" font-size="20">
+    <text x="95" y="260">▣ Rack / PDU</text>
+    <text x="95" y="310">▣ BMC / remote console</text>
+    <text x="95" y="360">▣ GPU node / GPU ×4</text>
+    <text x="95" y="410">▣ Spine / ToR network</text>
+    <text x="95" y="460">▣ Power + thermal signals</text>
+  </g>
+  <rect x="92" y="510" width="320" height="48" rx="12" fill="#0f2a3d"/>
+  <text x="118" y="542" fill="#bae6fd" font-family="Arial" font-size="18">BMC · power · east-west telemetry</text>
+
+  <rect x="505" y="155" width="385" height="430" rx="24" fill="#111c31" stroke="#a78bfa" stroke-width="2"/>
+  <text x="535" y="205" fill="#c4b5fd" font-family="Arial" font-size="24" font-weight="700">PLATFORM + IDENTITY</text>
+  <g fill="#e2e8f0" font-family="Arial" font-size="20">
+    <text x="540" y="260">▣ Kubernetes control plane</text>
+    <text x="540" y="310">▣ Privileged workloads</text>
+    <text x="540" y="360">▣ Identity / admin sessions</text>
+    <text x="540" y="410">▣ Object storage</text>
+    <text x="540" y="460">▣ Trust relationships</text>
+  </g>
+  <rect x="537" y="510" width="320" height="48" rx="12" fill="#251d45"/>
+  <text x="565" y="542" fill="#ddd6fe" font-family="Arial" font-size="18">IAM · K8s · storage · workload evidence</text>
+
+  <rect x="950" y="155" width="385" height="430" rx="24" fill="#111c31" stroke="#34d399" stroke-width="2"/>
+  <text x="980" y="205" fill="#6ee7b7" font-family="Arial" font-size="24" font-weight="700">AI ASSET + SECURITY</text>
+  <g fill="#e2e8f0" font-family="Arial" font-size="20">
+    <text x="985" y="260">▣ Model registry</text>
+    <text x="985" y="310">▣ Foundation model artifacts</text>
+    <text x="985" y="360">▣ Attack-path reconstruction</text>
+    <text x="985" y="410">▣ Blast-radius simulation</text>
+    <text x="985" y="460">▣ Control what-if analysis</text>
+  </g>
+  <rect x="982" y="510" width="320" height="48" rx="12" fill="#10352c"/>
+  <text x="1008" y="542" fill="#a7f3d0" font-family="Arial" font-size="18">Risk · chokepoints · resilience · response</text>
+
+  <path d="M445 370 L505 370" stroke="#64748b" stroke-width="4" marker-end="url(#a)"/>
+  <path d="M890 370 L950 370" stroke="#64748b" stroke-width="4" marker-end="url(#a)"/>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker></defs>
+
+  <rect x="250" y="625" width="900" height="58" rx="16" fill="#172033" stroke="#475569"/>
+  <text x="315" y="663" fill="#f8fafc" font-family="Arial" font-size="22" font-weight="700">One living evidence graph: asset → trust → telemetry → attack path → systemic impact → defensive control</text>
+</svg>
