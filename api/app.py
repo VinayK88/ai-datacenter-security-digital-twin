@@ -6,13 +6,14 @@ from pydantic import BaseModel, Field
 from digital_twin.attack_surface import trust_chokepoints
 from digital_twin.attacks import scenario_names
 from digital_twin.counterfactual import simulate_compromise
+from digital_twin.ml_telemetry import model_report
 from digital_twin.resilience import evaluate_resilience
 from digital_twin.scoring import overall_risk, score_assets
 from digital_twin.telemetry import generate_normal_telemetry, inject_attack_telemetry, top_anomalies
 from digital_twin.topology import build_default_twin
 
 
-app = FastAPI(title="AI Data Center Security Digital Twin", version="0.3.0")
+app = FastAPI(title="AI Data Center Security Digital Twin", version="0.4.0")
 
 
 class SimulationRequest(BaseModel):
@@ -54,6 +55,23 @@ def chokepoints(limit: int = Query(default=10, ge=1, le=30)) -> dict[str, object
             for row in rows
         ],
     }
+
+
+@app.get("/ml/telemetry")
+def telemetry_ml(scenario: str = "normal", limit: int = Query(default=10, ge=1, le=30)) -> dict[str, object]:
+    normal = generate_normal_telemetry(seed=11, minutes=60)
+    if scenario == "normal":
+        events = normal
+    elif scenario in scenario_names():
+        events = inject_attack_telemetry(normal, scenario)
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": "unknown scenario", "available_scenarios": ["normal", *scenario_names()]},
+        )
+    report = model_report(events, limit=limit)
+    report["scenario"] = scenario
+    return report
 
 
 @app.post("/simulate")
@@ -112,4 +130,8 @@ def simulate(request: SimulationRequest) -> dict[str, object]:
             }
             for event, score in anomalies
         ],
+        "multivariate_ml": {
+            "model": "PCAReconstructionAnomalyModel",
+            "top_minutes": model_report(events, limit=5)["top_anomaly_minutes"],
+        },
     }
