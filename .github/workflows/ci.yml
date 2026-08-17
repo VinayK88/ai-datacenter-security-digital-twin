@@ -34,11 +34,14 @@ jobs:
       - name: Run digital twin demo
         run: python -m digital_twin.demo
 
+      - name: Run multivariate telemetry ML
+        run: python -c "from digital_twin.ml_telemetry import model_report; from digital_twin.telemetry import generate_normal_telemetry; r=model_report(generate_normal_telemetry(), 5); assert r['model'] == 'PCAReconstructionAnomalyModel'"
+
       - name: Compile application modules
         run: python -m py_compile digital_twin/*.py dashboard/app.py api/app.py
 
       - name: Verify runtime imports
-        run: python -c "import fastapi, httpx, pandas, pydantic, streamlit, uvicorn; import api.app"
+        run: python -c "import fastapi, httpx, pandas, pydantic, sklearn, streamlit, uvicorn; import api.app"
 
       - name: Smoke test FastAPI
         shell: bash
@@ -49,6 +52,7 @@ jobs:
           trap 'kill $pid 2>/dev/null || true' EXIT
           for attempt in {1..20}; do
             if curl -fsS http://127.0.0.1:8000/health > /tmp/api-health.json; then
+              curl -fsS 'http://127.0.0.1:8000/ml/telemetry?scenario=normal&limit=3' > /tmp/api-ml.json
               cat /tmp/api-health.json
               exit 0
             fi
